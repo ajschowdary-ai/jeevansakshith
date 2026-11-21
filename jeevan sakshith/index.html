@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MarkMirror | ResultRadar Rush</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+<main class="app">
+
+<header>
+ <div class="brand">
+  <div class="logo">M</div>
+  <div>
+   <h1>MarkMirror</h1>
+   <small>RESULT RADAR RUSH • EXAM ANALYTICS</small>
+  </div>
+ </div>
+ <span class="badge">DEMO PORTAL • 2026–30</span>
+</header>
+
+<section class="hero">
+ <div>
+  <small style="color:#b8f5ef;letter-spacing:2px">SMART RESULT LOOKUP & BATCH INSIGHTS</small>
+  <h2>Every mark tells a story.</h2>
+  <p>Find semester results, understand academic performance and explore department-level insights through one simple dashboard.</p>
+ </div>
+ <span class="badge">100 SAMPLE STUDENTS</span>
+</section>
+
+<nav class="tabs no-print">
+ <button class="tab active" data-panel="lookupPanel">Result Lookup</button>
+ <button class="tab" data-panel="analyticsPanel">Batch Analytics</button>
+ <button class="tab" data-panel="toolsPanel">Student Tools</button>
+</nav>
+
+<section class="panel active" id="lookupPanel">
+ <div class="lookup">
+
+  <div class="card" id="searchCard">
+   <h3>Hall Ticket Result Lookup</h3>
+   <p class="sub">Enter a hall ticket number to view the semester marksheet.</p>
+   <div class="search">
+    <input id="hallTicket" value="22CSE104" placeholder="Example: 26MVADSR0001" >
+    <button class="btn" onclick="searchResult()">Search</button>
+   </div>
+   <div class="error" id="error"></div>
+   <p class="hint">Demo hall ticket: <b>26MVADSR0001</b></p>
+   <p class="muted">This frontend uses generated sample records. It is not connected to a university server.</p>
+  </div>
+
+  <div class="card">
+   <div class="student-top">
+    <div>
+     <p class="sub">SEMESTER RESULT • DEMO MARKSHEET</p>
+     <h2 id="studentName" style="margin:0;color:var(--navy)">Jeevan Sakshith</h2>
+     <p class="sub" id="studentMeta">26MVADSR0001 • CSE(AI & DS) • 2026 Batch</p>
+    </div>
+    <span class="pill" id="status">PASS</span>
+   </div>
+
+   <div class="info-grid">
+    <div class="info"><span>Hall Ticket</span><strong id="mHall">26MVADSR0001</strong></div>
+    <div class="info"><span>Branch</span><strong id="mBranch">CSE(AI & DS)</strong></div>
+    <div class="info"><span>Semester</span><strong>I Semester</strong></div>
+   </div>
+
+   <div class="table-wrap">
+    <table>
+     <thead>
+      <tr>
+       <th>Subject</th><th>Credits</th><th>Internal</th>
+       <th>External</th><th>Total</th><th>Grade</th>
+      </tr>
+     </thead>
+     <tbody id="marks"></tbody>
+    </table>
+   </div>
+
+   <div class="gpa-row">
+    <div class="gpa"><span>SGPA</span><strong id="sgpa">8.85</strong></div>
+    <div class="gpa"><span>CGPA</span><strong id="cgpa">8.72</strong></div>
+    <div class="gpa"><span>Total Credits</span><strong>20</strong></div>
+   </div>
+
+   <div class="actions no-print">
+    <button class="btn" onclick="window.print()">Print / Save PDF</button>
+    <button class="btn alt" onclick="downloadCSV()">Download CSV</button>
+   </div>
+  </div>
+ </div>
+</section>
+
+<section class="panel" id="analyticsPanel">
+ <div class="kpis">
+  <div class="kpi"><span>Students</span><strong id="studentCount">100</strong></div>
+  <div class="kpi"><span>Overall pass rate</span><strong id="passKpi">—</strong></div>
+  <div class="kpi"><span>Top SGPA</span><strong id="topKpi">—</strong></div>
+  <div class="kpi"><span>Subjects</span><strong>06</strong></div>
+ </div>
+
+ <div class="analytics">
+  <div class="card">
+   <h3>Subject Pass Rate</h3>
+   <p class="sub">Percentage of students passing each subject</p>
+   <div class="chartbox"><canvas id="passChart"></canvas></div>
+  </div>
+
+  <div class="card">
+   <h3>CGPA Distribution</h3>
+   <p class="sub">Students grouped by CGPA range</p>
+   <div class="chartbox"><canvas id="cgpaChart"></canvas></div>
+  </div>
+
+  <div class="card">
+   <div class="head">
+    <div>
+     <h3>Department Top 10</h3>
+     <p class="sub">Top performers by SGPA</p>
+    </div>
+    <select id="branchFilter" class="control" onchange="leaderboard()">
+     <option>ALL</option>
+     <option>CSE</option>
+     <option>ECE</option>
+     <option>EEE</option>
+     <option>MECH</option>
+    </select>
+   </div>
+   <div class="table-wrap">
+    <table>
+     <thead>
+      <tr><th>Rank</th><th>Hall Ticket</th><th>Branch</th><th>SGPA</th><th>Credits</th></tr>
+     </thead>
+     <tbody id="leaders"></tbody>
+    </table>
+   </div>
+  </div>
+
+  <div class="card">
+   <h3>Branch Comparison</h3>
+   <p class="sub">Average SGPA by department</p>
+   <div class="chartbox"><canvas id="branchChart"></canvas></div>
+  </div>
+ </div>
+</section>
+
+<section class="panel" id="toolsPanel">
+ <div class="tools">
+
+  <div class="card">
+   <h3>Historical Semester Trend</h3>
+   <p class="sub">Sample SGPA journey</p>
+   <input class="control" id="trendHall" value="22CSE104" style="margin:12px 0">
+   <button class="btn" onclick="showTrend()">Show trend</button>
+   <div class="chartbox" style="margin-top:12px"><canvas id="trendChart"></canvas></div>
+  </div>
+
+  <div class="card">
+   <h3>Re-evaluation Fee Estimator</h3>
+   <p class="sub">Select subjects. Demo fee is ₹300 per subject.</p>
+   <div id="feeOptions"></div>
+   <div class="info" id="feeTotal">Select subjects to estimate the fee.</div>
+  </div>
+
+  <div class="card">
+   <h3>Subject Difficulty Index</h3>
+   <p class="sub">Based on failure percentage in sample data.</p>
+   <div class="table-wrap">
+    <table>
+     <thead><tr><th>Subject</th><th>Failure</th><th>Difficulty</th></tr></thead>
+     <tbody id="difficulty"></tbody>
+    </table>
+   </div>
+  </div>
+
+  <div class="card">
+   <h3>Batch Comparison</h3>
+   <p class="sub">Compare average CGPA between sample batches.</p>
+   <label class="sub">First batch</label>
+   <select id="batchA" class="control">
+    <option>2026</option><option>2027</option><option>2028</option>
+   </select>
+   <label class="sub">Second batch</label>
+   <select id="batchB" class="control">
+    <option>2026</option><option>2027</option><option>2028</option>
+   </select>
+   <button class="btn" style="margin-top:12px" onclick="compareBatches()">Compare</button>
+   <div class="info" id="batchResult" style="margin-top:12px">Choose two batches.</div>
+  </div>
+
+ </div>
+</section>
+
+<footer>MARKMIRROR • RESULT RADAR RUSH • FRONTEND DEMONSTRATION</footer>
+</main>
+
+<script src="app.js"></script>
+
+</body>
+</html>
